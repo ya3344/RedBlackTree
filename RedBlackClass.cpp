@@ -119,7 +119,9 @@ void RedBlackClass::DeleteNode(const int data)
 {
 	NodeInfo* tempNode = nullptr;
 	NodeInfo* findDeleteNode = nullptr;
+	NodeInfo* childNode = nullptr;
 	bool isDeleteNode = false;
+	BYTE color = NodeInfo::BLACK;
 
 	findDeleteNode = mRootNode;
 	if (findDeleteNode == nullptr)
@@ -167,6 +169,7 @@ void RedBlackClass::DeleteNode(const int data)
 			mRootNode = nullptr;
 			SafeDelete(findDeleteNode);
 			SafeDelete(mNilNode);
+			mRootNode->color = NodeInfo::BLACK;
 			--mNodeNum;
 			return;
 		}
@@ -180,21 +183,27 @@ void RedBlackClass::DeleteNode(const int data)
 		if (findDeleteNode->parent->left == findDeleteNode) // 삭제노드가 
 		{
 			findDeleteNode->parent->left = mNilNode;
-			SafeDelete(findDeleteNode);
-			--mNodeNum;
-			return;
 		}
 		else if (findDeleteNode->parent->right == findDeleteNode)
 		{
 			findDeleteNode->parent->right = mNilNode;
-			SafeDelete(findDeleteNode);
-			--mNodeNum;
-			return;
 		}
 		else
 		{
 			CONSOLE_ERROR_LOG("deleteNode find error!");
 			return;
+		}
+		color = findDeleteNode->color;
+		--mNodeNum;
+		childNode = findDeleteNode->left;
+		childNode->parent = findDeleteNode->parent;
+		SafeDelete(findDeleteNode);
+
+		// 레드블랙트리 밸런싱 작업 진행
+		if (color == NodeInfo::BLACK)
+		{
+			// 자식이 없기 때문에 무조건 nil 노드이므로 left right 상관없이 전달.
+			RedBlackDelete(childNode);
 		}
 	}
 	//자식노드가 한쪽에만 있는 경우
@@ -208,6 +217,7 @@ void RedBlackClass::DeleteNode(const int data)
 				mRootNode = findDeleteNode->left;
 				mRootNode->parent = nullptr;
 				SafeDelete(findDeleteNode);
+				mRootNode->color = NodeInfo::BLACK;
 				--mNodeNum;
 				return;
 			}
@@ -217,19 +227,14 @@ void RedBlackClass::DeleteNode(const int data)
 			{
 				findDeleteNode->parent->left = findDeleteNode->left;
 				findDeleteNode->left->parent = findDeleteNode->parent;
-				SafeDelete(findDeleteNode);
-				--mNodeNum;
-				return;
 			}
 			// 부모노드의 자식오른쪽 노드가 삭제노드일 경우
 			else if (findDeleteNode->parent->right == findDeleteNode)
 			{
 				findDeleteNode->parent->right = findDeleteNode->left;
 				findDeleteNode->left->parent = findDeleteNode->parent;
-				SafeDelete(findDeleteNode);
-				--mNodeNum;
-				return;
 			}
+			childNode = findDeleteNode->left;
 		}
 		// 자식노드가 오른쪽에만 있는 경우
 		else if (findDeleteNode->right != mNilNode)
@@ -238,6 +243,7 @@ void RedBlackClass::DeleteNode(const int data)
 			{
 				mRootNode = findDeleteNode->right;
 				mRootNode->parent = nullptr;
+				mRootNode->color = NodeInfo::BLACK;
 				SafeDelete(findDeleteNode);
 				--mNodeNum;
 				return;
@@ -248,19 +254,23 @@ void RedBlackClass::DeleteNode(const int data)
 			{
 				findDeleteNode->parent->left = findDeleteNode->right;
 				findDeleteNode->right->parent = findDeleteNode->parent;
-				SafeDelete(findDeleteNode);
-				--mNodeNum;
-				return;
 			}
 			// 부모노드의 자식오른쪽 노드가 삭제노드일 경우
 			else if (findDeleteNode->parent->right = findDeleteNode)
 			{
 				findDeleteNode->parent->right = findDeleteNode->right;
 				findDeleteNode->right->parent = findDeleteNode->parent;
-				SafeDelete(findDeleteNode);
-				--mNodeNum;
-				return;
 			}
+			childNode = findDeleteNode->right;
+		}
+		color = findDeleteNode->color;
+		--mNodeNum;
+		SafeDelete(findDeleteNode);
+
+		// 레드블랙트리 밸런싱 작업 진행
+		if (color == NodeInfo::BLACK)
+		{
+			RedBlackDelete(childNode);
 		}
 	}
 	// 양쪽 자식노드가 모두 있는 경우
@@ -283,22 +293,23 @@ void RedBlackClass::DeleteNode(const int data)
 		if (tempNode->parent->left == tempNode)
 		{
 			tempNode->parent->left = tempNode->right;
-			if (tempNode->right != mNilNode)
-				tempNode->right->parent = tempNode->parent;
-
-			SafeDelete(tempNode);
-			--mNodeNum;
-			return;
+			tempNode->right->parent = tempNode->parent;
 		}
 		else if (tempNode->parent->right == tempNode)
 		{
 			tempNode->parent->right = tempNode->right;
-			if (tempNode->right != mNilNode)
-				tempNode->right->parent = tempNode->parent;
+			tempNode->right->parent = tempNode->parent;
+		}
+		--mNodeNum;
+		color = tempNode->color;
+		childNode = tempNode->right;
+		SafeDelete(tempNode);
 
-			SafeDelete(tempNode);
-			--mNodeNum;
-			return;
+		// 레드블랙트리 밸런싱 작업 진행
+		if (color == NodeInfo::BLACK)
+		{
+			// 마지막 리프노드 이기 때문에 자식노드가 무조건 nilnode 이기때문에 left right 상관없이 전달.
+			RedBlackDelete(childNode);
 		}
 	}
 }
@@ -425,11 +436,111 @@ void RedBlackClass::RedBlackInsert(NodeInfo* pointNode)
 	mRootNode->color = NodeInfo::BLACK;
 }
 
+void RedBlackClass::RedBlackDelete(NodeInfo* pointNode)
+{
+	NodeInfo* siblingNode = nullptr;
+
+	if (nullptr == pointNode)
+	{
+		CONSOLE_ERROR_LOG("pointNode nullptr!\n");
+		return;
+	}
+
+	while (true)
+	{
+		if (NodeInfo::RED == pointNode->color || pointNode == mRootNode)
+		{
+			pointNode->color = NodeInfo::BLACK;
+			return;
+		}
+
+		// 부모노드를 기준으로 왼쪽인 경우
+		if (pointNode == pointNode->parent->left)
+		{
+			siblingNode = pointNode->parent->right;
+			// 삭제노드의 형제가 레드인 경우
+			if (siblingNode->color == NodeInfo::RED)
+			{
+				siblingNode->color = NodeInfo::BLACK;
+				pointNode->parent->color = NodeInfo::RED;
+				LeftRotation(pointNode->parent);
+			}
+			// 삭제노드의 형제가 블랙인 경우
+			else
+			{
+				// 자식노드가 모두 블랙인 경우
+				if (siblingNode->left->color == NodeInfo::BLACK
+					&& siblingNode->right->color == NodeInfo::BLACK)
+				{
+					siblingNode->color = NodeInfo::RED;
+					pointNode = siblingNode->parent;
+				}
+				else
+				{
+					if (siblingNode->left->color == NodeInfo::RED)
+					{
+						siblingNode->left->color = NodeInfo::BLACK;
+						siblingNode->color = NodeInfo::RED;
+						RightRotation(siblingNode);
+						siblingNode = siblingNode->parent;
+					}
+					siblingNode->color = pointNode->parent->color;
+					pointNode->parent->color = NodeInfo::BLACK;
+					siblingNode->right->color = NodeInfo::BLACK;
+					LeftRotation(pointNode->parent);
+					mRootNode->color = NodeInfo::BLACK;
+					return;
+				}
+			}
+		}
+		// 부모노드를 기준으로 오른쪽인 경우
+		else if (pointNode == pointNode->parent->right)
+		{
+			siblingNode = pointNode->parent->left;
+			// 삭제노드의 형제가 레드인 경우
+			if (siblingNode->color == NodeInfo::RED)
+			{
+				siblingNode->color = NodeInfo::BLACK;
+				pointNode->parent->color = NodeInfo::RED;
+				RightRotation(pointNode->parent);
+			}
+			// 삭제노드의 형제가 블랙인 경우
+			else
+			{
+				// 자식노드가 모두 블랙인 경우
+				if (siblingNode->left->color == NodeInfo::BLACK
+					&& siblingNode->right->color == NodeInfo::BLACK)
+				{
+					siblingNode->color = NodeInfo::RED;
+					pointNode = siblingNode->parent;
+				}
+				else
+				{
+					if (siblingNode->right->color == NodeInfo::RED)
+					{
+						siblingNode->right->color = NodeInfo::BLACK;
+						siblingNode->color = NodeInfo::RED;
+						LeftRotation(siblingNode);
+						siblingNode = siblingNode->parent;
+					}
+					siblingNode->color = pointNode->parent->color;
+					pointNode->parent->color = NodeInfo::BLACK;
+					siblingNode->left->color = NodeInfo::BLACK;
+					RightRotation(pointNode->parent);
+					mRootNode->color = NodeInfo::BLACK;
+					return;
+				}
+			}
+		}
+	}
+	
+}
+
 void RedBlackClass::RightRotation(NodeInfo* pointNode)
 {
 	if (nullptr == pointNode)
 	{
-		CONSOLE_ERROR_LOG("parent nullptr!\n");
+		CONSOLE_ERROR_LOG("pointNode nullptr!\n");
 		return;
 	}
 	if (nullptr == mRootNode)

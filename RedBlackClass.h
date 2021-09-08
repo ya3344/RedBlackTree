@@ -30,6 +30,7 @@ public:
 // 레드블랙 트리 관련 함수
 public:
 	void RedBlackInsert(NodeInfo* pointNode);
+	void RedBlackDelete(NodeInfo* pointNode);
 	void RightRotation(NodeInfo* pointNode);
 	void LeftRotation(NodeInfo* pointNode);
 

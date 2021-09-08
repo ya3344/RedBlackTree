@@ -17,7 +17,7 @@ enum eWindowINdex
 enum eDrawIndex
 {
     nodeSize = 15,
-    lineSize = 50,
+    lineSize = 30,
     heightSize = 40,
 };
 
@@ -70,20 +70,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     gRedBlakcClass.InsertNode(3);
     gRedBlakcClass.InsertNode(9);
     gRedBlakcClass.InsertNode(100);
-    //gRedBlakcClass.InsertNode(20);
-    //gRedBlakcClass.InsertNode(1);
-    //gRedBlakcClass.InsertNode(2);
-    //gRedBlakcClass.InsertNode(4);
-    //gRedBlakcClass.InsertNode(7);
-    //gRedBlakcClass.InsertNode(8);
-    //gRedBlakcClass.InsertNode(111);
-    //gRedBlakcClass.InsertNode(112);
-    //gRedBlakcClass.InsertNode(101);
-    //gRedBlakcClass.InsertNode(24);
-    //gRedBlakcClass.InsertNode(23);
-    //gRedBlakcClass.InsertNode(22);
-    //gRedBlakcClass.InsertNode(25);
-    //gRedBlakcClass.InsertNode(26);
+    gRedBlakcClass.InsertNode(20);
+    gRedBlakcClass.InsertNode(1);
+    gRedBlakcClass.InsertNode(2);
+    gRedBlakcClass.InsertNode(4);
+    gRedBlakcClass.InsertNode(7);
+    gRedBlakcClass.InsertNode(8);
+    gRedBlakcClass.InsertNode(111);
+    gRedBlakcClass.InsertNode(112);
+    gRedBlakcClass.InsertNode(101);
+    gRedBlakcClass.InsertNode(24);
+    gRedBlakcClass.InsertNode(23);
+    gRedBlakcClass.InsertNode(22);
+    gRedBlakcClass.InsertNode(25);
+    gRedBlakcClass.InsertNode(26);
 
    /* gRedBlakcClass.InsertNode(10);
     gRedBlakcClass.InsertNode(5);
@@ -105,33 +105,33 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
     wprintf(L"\n\n");
 
-    //gRedBlakcClass.DeleteNode(10);
-    //gRedBlakcClass.DeleteNode(11);
-    //gRedBlakcClass.DeleteNode(12);
-    //gRedBlakcClass.DeleteNode(13);
-    //gRedBlakcClass.DeleteNode(5);
-    //gRedBlakcClass.DeleteNode(6);
-    //gRedBlakcClass.DeleteNode(3);
-    //gRedBlakcClass.DeleteNode(9);
-    //gRedBlakcClass.DeleteNode(100);
-    //gRedBlakcClass.DeleteNode(20);
-    //gRedBlakcClass.DeleteNode(1);
-    //gRedBlakcClass.DeleteNode(2);
-    //gRedBlakcClass.DeleteNode(4);
-    //gRedBlakcClass.DeleteNode(7);
-    //gRedBlakcClass.DeleteNode(8);
-    //gRedBlakcClass.DeleteNode(111);
-    //gRedBlakcClass.DeleteNode(112);
-    //gRedBlakcClass.DeleteNode(101);
-    //gRedBlakcClass.DeleteNode(24);
-    //gRedBlakcClass.DeleteNode(23);
-    //gRedBlakcClass.DeleteNode(22);
-    //gRedBlakcClass.DeleteNode(25);
+    gRedBlakcClass.DeleteNode(10);
+    gRedBlakcClass.DeleteNode(11);
+    gRedBlakcClass.DeleteNode(12);
+    gRedBlakcClass.DeleteNode(13);
+    gRedBlakcClass.DeleteNode(5);
+    gRedBlakcClass.DeleteNode(3);
+    gRedBlakcClass.DeleteNode(9);
+    gRedBlakcClass.DeleteNode(100);
+    gRedBlakcClass.DeleteNode(20);
+    gRedBlakcClass.DeleteNode(1);
+    gRedBlakcClass.DeleteNode(2);
+    gRedBlakcClass.DeleteNode(4);
+    gRedBlakcClass.DeleteNode(7);
+    gRedBlakcClass.DeleteNode(8);
+    gRedBlakcClass.DeleteNode(111);
+    gRedBlakcClass.DeleteNode(112);
+    gRedBlakcClass.DeleteNode(101);
+    gRedBlakcClass.DeleteNode(24);
+    gRedBlakcClass.DeleteNode(23);
+   // gRedBlakcClass.DeleteNode(22);
+  //  gRedBlakcClass.DeleteNode(25);
    // gRedBlakcClass.DeleteNode(26);
 
-   /* wprintf(L"Delete Inorder:");
+    wprintf(L"Delete Inorder:");
     gRedBlakcClass.InorderPrint(gRedBlakcClass.GetRootNode());
-    wprintf(L"\n\n");*/
+    wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
+    wprintf(L"\n\n");
     // 기본 메시지 루프입니다:
     while (GetMessage(&msg, nullptr, 0, 0))
     {
