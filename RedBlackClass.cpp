@@ -169,7 +169,6 @@ void RedBlackClass::DeleteNode(const int data)
 			mRootNode = nullptr;
 			SafeDelete(findDeleteNode);
 			SafeDelete(mNilNode);
-			mRootNode->color = NodeInfo::BLACK;
 			--mNodeNum;
 			return;
 		}
@@ -216,8 +215,8 @@ void RedBlackClass::DeleteNode(const int data)
 			{
 				mRootNode = findDeleteNode->left;
 				mRootNode->parent = nullptr;
-				SafeDelete(findDeleteNode);
 				mRootNode->color = NodeInfo::BLACK;
+				SafeDelete(findDeleteNode);
 				--mNodeNum;
 				return;
 			}
@@ -339,7 +338,7 @@ void RedBlackClass::AllDeleteNode(NodeInfo* node)
 
 	AllDeleteNode(deleteNode->left);
 	AllDeleteNode(deleteNode->right);
-	wprintf(L"deleteNode: %d", deleteNode->data);
+	wprintf(L"deleteNode: %d ", deleteNode->data);
 	SafeDelete(deleteNode);
 	--mNodeNum;
 }

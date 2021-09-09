@@ -5,7 +5,7 @@
 #include "framework.h"
 #include "RedBlackTree.h"
 #include "RedBlackClass.h"
-
+#include "TestSystem.h"
 #define MAX_LOADSTRING 100
 
 enum eWindowINdex
@@ -28,7 +28,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 HWND gHWnd;
 HIMC gHOldIMC;
 RedBlackClass gRedBlakcClass;
-
+TestSystem gTestSystem(&gRedBlakcClass);
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -62,29 +62,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
     RECT windowRect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
-    gRedBlakcClass.InsertNode(10);
-    gRedBlakcClass.InsertNode(11);
-    gRedBlakcClass.InsertNode(12);
-    gRedBlakcClass.InsertNode(13);
-    gRedBlakcClass.InsertNode(5);
-    gRedBlakcClass.InsertNode(3);
-    gRedBlakcClass.InsertNode(9);
-    gRedBlakcClass.InsertNode(100);
-    gRedBlakcClass.InsertNode(20);
-    gRedBlakcClass.InsertNode(1);
-    gRedBlakcClass.InsertNode(2);
-    gRedBlakcClass.InsertNode(4);
-    gRedBlakcClass.InsertNode(7);
-    gRedBlakcClass.InsertNode(8);
-    gRedBlakcClass.InsertNode(111);
-    gRedBlakcClass.InsertNode(112);
-    gRedBlakcClass.InsertNode(101);
-    gRedBlakcClass.InsertNode(24);
-    gRedBlakcClass.InsertNode(23);
-    gRedBlakcClass.InsertNode(22);
-    gRedBlakcClass.InsertNode(25);
-    gRedBlakcClass.InsertNode(26);
 
+    // 테스트 시스템 클래스 초기화
+  
+    //gRedBlakcClass.InsertNode(10);
+    //gRedBlakcClass.InsertNode(11);
+    //gRedBlakcClass.InsertNode(12);
+    //gRedBlakcClass.InsertNode(13);
+    //gRedBlakcClass.InsertNode(5);
+    //gRedBlakcClass.InsertNode(3);
+    //gRedBlakcClass.InsertNode(9);
+    //gRedBlakcClass.InsertNode(100);
+    //gRedBlakcClass.InsertNode(20);
+    //gRedBlakcClass.InsertNode(1);
+    //gRedBlakcClass.InsertNode(2);
+    //gRedBlakcClass.InsertNode(4);
+    //gRedBlakcClass.InsertNode(7);
+    //gRedBlakcClass.InsertNode(8);
+    //gRedBlakcClass.InsertNode(111);
+    //gRedBlakcClass.InsertNode(112);
+    //gRedBlakcClass.InsertNode(101);
+    //gRedBlakcClass.InsertNode(24);
+    //gRedBlakcClass.InsertNode(23);
+    //gRedBlakcClass.InsertNode(22);
+    //gRedBlakcClass.InsertNode(25);
+    //gRedBlakcClass.InsertNode(26);
+    gTestSystem.RandomInsert();
    /* gRedBlakcClass.InsertNode(10);
     gRedBlakcClass.InsertNode(5);
     gRedBlakcClass.InsertNode(14);
@@ -103,9 +106,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     wprintf(L"Origin Inorder:");
     gRedBlakcClass.InorderPrint(gRedBlakcClass.GetRootNode());
     wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
-    wprintf(L"\n\n");
 
-    gRedBlakcClass.DeleteNode(10);
+  /*  gRedBlakcClass.DeleteNode(10);
     gRedBlakcClass.DeleteNode(11);
     gRedBlakcClass.DeleteNode(12);
     gRedBlakcClass.DeleteNode(13);
@@ -123,15 +125,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     gRedBlakcClass.DeleteNode(112);
     gRedBlakcClass.DeleteNode(101);
     gRedBlakcClass.DeleteNode(24);
-    gRedBlakcClass.DeleteNode(23);
+    gRedBlakcClass.DeleteNode(23);*/
    // gRedBlakcClass.DeleteNode(22);
   //  gRedBlakcClass.DeleteNode(25);
    // gRedBlakcClass.DeleteNode(26);
 
-    wprintf(L"Delete Inorder:");
+   /* wprintf(L"Delete Inorder:");
     gRedBlakcClass.InorderPrint(gRedBlakcClass.GetRootNode());
     wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
-    wprintf(L"\n\n");
+    wprintf(L"\n\n");*/
     // 기본 메시지 루프입니다:
     while (GetMessage(&msg, nullptr, 0, 0))
     {
@@ -336,6 +338,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     RECT insertRect = { 160, WINDOW_HEIGHT - 100, 230, WINDOW_HEIGHT - 70 };
     RECT deleteRect = { 240, WINDOW_HEIGHT - 100, 310, WINDOW_HEIGHT - 70 };
     RECT clearRect = { 320, WINDOW_HEIGHT - 100, 390, WINDOW_HEIGHT - 70 };
+    RECT randomInsertRect = { 400, WINDOW_HEIGHT - 100, 510, WINDOW_HEIGHT - 70 };
     RECT tempRect;
     TCHAR textInput[128] = { 0, };
     static TCHAR textNodeInput[26] = { 0, };
@@ -415,18 +418,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 gRedBlakcClass.InsertNode(nodeNum);
                 textNodeInput[0] = NULL;
-                wprintf(L"Node Num:%d\n", gRedBlakcClass.GetNodeNum());
+                wprintf(L"Inorder:");
+                gRedBlakcClass.InorderPrint(gRedBlakcClass.GetRootNode());
+                wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
             }
             if (PtInRect(&deleteRect, mousePoint))
             {
                 gRedBlakcClass.DeleteNode(nodeNum);
                 textNodeInput[0] = NULL;
-                wprintf(L"Node Num:%d\n", gRedBlakcClass.GetNodeNum());
+                wprintf(L"Inorder:");
+                gRedBlakcClass.InorderPrint(gRedBlakcClass.GetRootNode());
+                wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
             }
             if (PtInRect(&clearRect, mousePoint))
             {
                 gRedBlakcClass.AllDeleteNode(gRedBlakcClass.GetRootNode());
                 textNodeInput[0] = NULL;
+                wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
+            }
+            if (PtInRect(&randomInsertRect, mousePoint))
+            {
+                if(gRedBlakcClass.GetNodeNum() > 0)
+                    gRedBlakcClass.AllDeleteNode(gRedBlakcClass.GetRootNode());
+
+                textNodeInput[0] = NULL;
+                wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
+                gTestSystem.RandomInsert();
+                wprintf(L"Inorder:");
+                gRedBlakcClass.InorderPrint(gRedBlakcClass.GetRootNode());
                 wprintf(L"\nNode Num:%d\n", gRedBlakcClass.GetNodeNum());
             }
 
@@ -482,6 +501,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrawLineBox(layDC, clearRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
             wsprintf(textInput, L"clear");
             DrawText(layDC, textInput, -1, &clearRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+
+            SetTextColor(layDC, RGB(0, 0, 0));
+            DrawLineBox(layDC, randomInsertRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
+            wsprintf(textInput, L"random insert");
+            DrawText(layDC, textInput, -1, &randomInsertRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
             BitBlt(hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, layDC, 0, 0, SRCCOPY);
             EndPaint(hWnd, &ps);
