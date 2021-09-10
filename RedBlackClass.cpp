@@ -476,6 +476,9 @@ void RedBlackClass::RedBlackDelete(NodeInfo* pointNode)
 				}
 				else
 				{
+					/* 형제노드 왼쪽자식이 레드인 경우 형제노드 기준으로 우회전하여 오른쪽자식이 
+					레드인경우로 변경하여 부모노드기준으로 좌회전하여 밸런싱 가능하도록 작업.
+					*/
 					if (siblingNode->left->color == NodeInfo::RED)
 					{
 						siblingNode->left->color = NodeInfo::BLACK;
@@ -515,6 +518,9 @@ void RedBlackClass::RedBlackDelete(NodeInfo* pointNode)
 				}
 				else
 				{
+					/* 형제노드 오른쪽자식이 레드인 경우 형제노드 기준으로 좌회전하여 왼쪽자식이
+					레드인경우로 변경하여 부모노드기준으로 우회전하여 밸런싱 가능하도록 작업.
+					*/
 					if (siblingNode->right->color == NodeInfo::RED)
 					{
 						siblingNode->right->color = NodeInfo::BLACK;
