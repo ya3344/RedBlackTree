@@ -330,8 +330,9 @@ void DrawRedBlackTree(HDC hdc, POINT rootPos, POINT standardPos, int depth,
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
-    HDC layDC;
-    HBITMAP lay;
+    HDC memDC;
+    HBITMAP selectBitmap;
+    HBITMAP oldBitmap;
     PAINTSTRUCT ps;
     RECT windowRect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
     RECT inputRect = { 50, WINDOW_HEIGHT - 100, 150, WINDOW_HEIGHT - 70 };
@@ -465,52 +466,54 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
 
             //	DoubleBuffering
-            layDC = CreateCompatibleDC(hdc);
-            lay = CreateCompatibleBitmap(hdc, WINDOW_WIDTH, WINDOW_HEIGHT);
-            SelectObject(layDC, lay);
+            memDC = CreateCompatibleDC(hdc);
+            selectBitmap = CreateCompatibleBitmap(hdc, WINDOW_WIDTH, WINDOW_HEIGHT);
+            oldBitmap = (HBITMAP)SelectObject(memDC, selectBitmap);
             //	Begin work
-            SetBkMode(layDC, TRANSPARENT);
-            SetTextColor(layDC, RGB(255, 255, 255));
-            FillRect(layDC, &windowRect, (HBRUSH)GetStockObject(WHITE_BRUSH));
+            SetBkMode(memDC, TRANSPARENT);
+            SetTextColor(memDC, RGB(255, 255, 255));
+            FillRect(memDC, &windowRect, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
             // 레드블랙 트리 노드 그리기
             if (gRedBlakcClass.GetNodeNum() > 0)
             {
-                DrawRedBlackTree(layDC, rootPos, standardPos, depth, gRedBlakcClass.GetRootNode(), gRedBlakcClass.GetNodeNum(), { 0, 0 });
+                DrawRedBlackTree(memDC, rootPos, standardPos, depth, gRedBlakcClass.GetRootNode(), gRedBlakcClass.GetNodeNum(), { 0, 0 });
             }
 
             // 입력창 그리기
-            FrameRect(layDC, &inputRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
-            SetTextColor(layDC, RGB(0, 0, 0));
+            FrameRect(memDC, &inputRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
+            SetTextColor(memDC, RGB(0, 0, 0));
             wsprintf(textInput, L"Input : %s", textNodeInput);
-            GetTextExtentPoint32(layDC, textInput, lstrlen(textInput), &size);
+            GetTextExtentPoint32(memDC, textInput, lstrlen(textInput), &size);
             tempRect = RectPointPlus(inputRect, { 5, 0 });
-            DrawText(layDC, textInput, -1, &tempRect, DT_VCENTER | DT_SINGLELINE);
+            DrawText(memDC, textInput, -1, &tempRect, DT_VCENTER | DT_SINGLELINE);
 
-            SetTextColor(layDC, RGB(0, 0, 0));
-            DrawLineBox(layDC, insertRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
+            SetTextColor(memDC, RGB(0, 0, 0));
+            DrawLineBox(memDC, insertRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
             wsprintf(textInput, L"insert");
-            DrawText(layDC, textInput, -1, &insertRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+            DrawText(memDC, textInput, -1, &insertRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
-            SetTextColor(layDC, RGB(0, 0, 0));
-            DrawLineBox(layDC, deleteRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
+            SetTextColor(memDC, RGB(0, 0, 0));
+            DrawLineBox(memDC, deleteRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
             wsprintf(textInput, L"delete");
-            DrawText(layDC, textInput, -1, &deleteRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+            DrawText(memDC, textInput, -1, &deleteRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
-            SetTextColor(layDC, RGB(0, 0, 0));
-            DrawLineBox(layDC, clearRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
+            SetTextColor(memDC, RGB(0, 0, 0));
+            DrawLineBox(memDC, clearRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
             wsprintf(textInput, L"clear");
-            DrawText(layDC, textInput, -1, &clearRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+            DrawText(memDC, textInput, -1, &clearRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
-            SetTextColor(layDC, RGB(0, 0, 0));
-            DrawLineBox(layDC, randomInsertRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
+            SetTextColor(memDC, RGB(0, 0, 0));
+            DrawLineBox(memDC, randomInsertRect, RGB(125, 125, 125), RGB(125, 125, 125), 2, false);
             wsprintf(textInput, L"random insert");
-            DrawText(layDC, textInput, -1, &randomInsertRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+            DrawText(memDC, textInput, -1, &randomInsertRect, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
-            BitBlt(hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, layDC, 0, 0, SRCCOPY);
+            BitBlt(hdc, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, memDC, 0, 0, SRCCOPY);
+            
+            SelectObject(memDC, oldBitmap);
+            DeleteObject(selectBitmap);
+            DeleteDC(memDC);
             EndPaint(hWnd, &ps);
-            DeleteDC(layDC);
-            DeleteObject(lay);
         }
         break;
     case WM_DESTROY:
